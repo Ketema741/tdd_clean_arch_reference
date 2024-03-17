@@ -28,7 +28,8 @@ void main() {
     when(() => networkInfo.isConnected).thenAnswer((_) async => true);
 
     // Provide a mock implementation for the saveBlogs method
-    when(() => localDataSource.saveBlogs(any())).thenAnswer((_) async => null);
+    when(() => localDataSource.saveBlogs(any()))
+        .thenAnswer((_) async => Future.value());
 
     repository = BlogRepositoryImpl(
       localDataSource: localDataSource,
@@ -36,6 +37,10 @@ void main() {
       remoteDataSource: remoteDataSource,
     );
   });
+
+  const title = "blog 1";
+  const body = "body 1";
+  const userId = 1;
 
   group('getBlogs', () {
     final tBlogList = [const BlogModel.empty()];
@@ -65,6 +70,8 @@ void main() {
 
       // Assert
       expect(result, Right(tBlogList));
+      verify(() => remoteDataSource.getBlogs()).called(1);
+      verifyNoMoreInteractions(remoteDataSource);
     });
 
     test(
@@ -80,6 +87,8 @@ void main() {
       // Assert
       expect(result,
           const Left(ServerFailure(message: 'Error while fetching blogs')));
+      verify(() => remoteDataSource.getBlogs()).called(1);
+      verifyNoMoreInteractions(remoteDataSource);
     });
 
     test(
@@ -90,17 +99,23 @@ void main() {
             title: any(named: "title"),
             body: any(named: "body"),
             userId: any(named: "userId"),
-          )).thenAnswer((_) async => const Right(null));
+          )).thenAnswer((_) async => Future.value());
 
       // Act
       final result = await repository.createBlogs(
-        title: "blog 1",
-        body: "body 1",
-        userId: 1,
+        title: title,
+        body: body,
+        userId: userId,
       );
 
       // Assert
-      expect(result, const Right<dynamic, void>(null));
+      expect(result, equals(const Right<dynamic, void>(null)));
+      verify(() => remoteDataSource.createBlogs(
+            title: title,
+            body: body,
+            userId: userId,
+          )).called(1);
+      verifyNoMoreInteractions(remoteDataSource);
     });
 
     test(
@@ -115,14 +130,20 @@ void main() {
 
       // Act
       final result = await repository.createBlogs(
-        title: "blog 1",
-        body: "body 1",
-        userId: 1,
+        title: title,
+        body: body,
+        userId: userId,
       );
 
       // Assert
       expect(result,
           const Left(ServerFailure(message: 'Error while creating blogs')));
+      verify(() => remoteDataSource.createBlogs(
+            title: title,
+            body: body,
+            userId: userId,
+          )).called(1);
+      verifyNoMoreInteractions(remoteDataSource);
     });
   });
 }
