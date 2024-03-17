@@ -4,6 +4,7 @@ import 'package:tdd_clean_architecture/features/blog/data/data_source/local_data
 import 'package:tdd_clean_architecture/features/blog/data/data_source/remote_data_source/blog_remote_data_source.dart';
 import 'package:tdd_clean_architecture/features/blog/data/repository/blog_repository_impl.dart';
 import 'package:tdd_clean_architecture/features/blog/domain/repositories/blog_repository.dart';
+import 'package:tdd_clean_architecture/features/blog/domain/usecases/create_blog.dart';
 import 'package:tdd_clean_architecture/features/blog/domain/usecases/get_blog.dart';
 import 'package:tdd_clean_architecture/features/blog/presentation/bloc/blog_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -16,6 +17,7 @@ final sl = GetIt.instance;
 void init() {
   // Registering the BlogUseCase as a lazy singleton
   sl.registerLazySingleton(() => GetBlog(sl()));
+  sl.registerLazySingleton(() => CreateBlog(sl()));
 
   // Registering the BlogRepositoryImpl as a lazy singleton
   sl.registerLazySingleton<BlogRepository>(() => BlogRepositoryImpl(
@@ -33,7 +35,7 @@ void init() {
       () => BlogLocalDataSourceImpl());
 
   // Registering the LoginBloc as a factory
-  sl.registerFactory(() => BlogBloc(blogUseCase: sl()));
+  sl.registerFactory(() => BlogBloc(getBlogUseCase: sl(), createBlogUseCase: sl()));
 
   // Registering the NetworkInfoImpl as a lazy singleton
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(
