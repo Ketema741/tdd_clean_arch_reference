@@ -24,7 +24,6 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
     );
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
-      print(data.length);
       return data.map((item) => BlogModel.fromMap(item)).toList();
     } else {
       throw ServerException(message: response.body.toString());
