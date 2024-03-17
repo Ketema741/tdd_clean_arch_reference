@@ -1,13 +1,10 @@
-import 'dart:convert';
-
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tdd_clean_architecture/core/errors/exception.dart';
 import 'package:tdd_clean_architecture/core/utils/constants.dart';
 import 'package:tdd_clean_architecture/features/blog/data/data_source/data_source.dart';
 import 'package:http/http.dart' as http;
-import 'package:tdd_clean_architecture/features/blog/data/models/blog_hive_model.dart';
+import 'package:tdd_clean_architecture/features/blog/data/models/blog_model.dart';
 
 class MockHttpClient extends Mock implements http.Client {}
 
@@ -22,8 +19,8 @@ void main() {
   });
 
   group('getBlogs', () {
-    final sampleJson =
-        jsonEncode('[{"id": 1, "title": "Test", "body": "Test", "userId": 1}]');
+    const sampleJson =
+        '[{"id": 1, "title": "Test", "body": "Test", "userId": 1}]';
 
     test('should perform a GET request and return a list of BlogModel',
         () async {
